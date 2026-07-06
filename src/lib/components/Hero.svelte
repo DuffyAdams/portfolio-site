@@ -80,14 +80,6 @@
 
   <div class="grid items-center gap-10 lg:grid-cols-[1.03fr_0.97fr]">
     <div class="reveal" use:reveal={0}>
-      <div class="pill mb-8">
-        <span class="relative flex h-2.5 w-2.5">
-          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span>
-          <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-        </span>
-        Open to Software Engineering Roles
-      </div>
-
       <p class="mb-5 text-sm font-bold uppercase tracking-[0.22em] text-muted-foreground">Software Engineer / Full-Stack Developer</p>
       <h1 class="max-w-4xl text-5xl font-black leading-[0.95] tracking-normal text-foreground sm:text-7xl lg:text-8xl">
         Duffy Adams

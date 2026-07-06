@@ -38,6 +38,22 @@
       accent: 'linear-gradient(135deg, #dcfce7, #22c55e 50%, #111827)'
     },
     {
+      title: 'Volume Scroller',
+      description:
+        'A lightweight Windows desktop utility that lets you control system volume by scrolling over the taskbar, with a native Tauri backend and configurable React overlay.',
+      highlights: [
+        'Taskbar mouse-wheel hooks for immediate system volume control',
+        'Rust backend for Windows audio endpoint control, tray actions, and startup preferences',
+        'React settings UI for scroll speed, direction, overlay scale, position, and themes',
+        'Always-on-top overlay with smooth animation and fullscreen-app pause mode'
+      ],
+      tech: ['Tauri 2', 'Rust', 'React', 'TypeScript', 'Vite', 'Windows APIs'],
+      demoHref: 'https://scrolly.duffyadams.com/',
+      githubHref: 'https://github.com/DuffyAdams/VolumeScroller',
+      previewDemo: 'volume-scroller' as const,
+      accent: 'linear-gradient(135deg, #dbeafe, #60a5fa 48%, #111827)'
+    },
+    {
       title: 'Pourtocol Smart Fountain',
       description:
         'A distributed systems project that uses NFC identity, ultrasonic cup detection, and an ESP32-controlled pour system connected to a web UI.',
@@ -64,7 +80,7 @@
   </div>
 
   <div class="grid gap-5 md:grid-cols-2">
-    {#each projects.slice(0, 2) as project, index}
+    {#each projects.slice(0, 3) as project, index}
       <ProjectCard {project} delay={index * 110} />
     {/each}
   </div>
