@@ -11,32 +11,32 @@
 
 :root {
   color-scheme: light;
-  --background: 36 79% 92%;
-  --foreground: 24 30% 16%;
-  --muted: 33 56% 87%;
-  --muted-foreground: 22 16% 38%;
-  --card: 34 60% 96%;
-  --card-foreground: 24 30% 16%;
-  --border: 28 42% 80%;
-  --primary: 22 46% 24%;
-  --primary-foreground: 36 75% 95%;
-  --accent: 24 82% 61%;
-  --accent-foreground: 24 30% 16%;
+  --background: 38 55% 96%;
+  --foreground: 24 26% 19%;
+  --muted: 34 38% 90%;
+  --muted-foreground: 24 14% 40%;
+  --card: 40 60% 99%;
+  --card-foreground: 24 26% 19%;
+  --border: 30 28% 83%;
+  --primary: 18 48% 36%;
+  --primary-foreground: 40 60% 99%;
+  --accent: 22 57% 48%;
+  --accent-foreground: 40 60% 99%;
 }
 
 .dark {
   color-scheme: dark;
-  --background: 220 22% 7%;
-  --foreground: 210 32% 96%;
-  --muted: 220 16% 14%;
-  --muted-foreground: 218 12% 70%;
-  --card: 220 18% 10%;
-  --card-foreground: 210 32% 96%;
-  --border: 220 15% 20%;
-  --primary: 210 32% 96%;
-  --primary-foreground: 220 22% 7%;
-  --accent: 204 100% 62%;
-  --accent-foreground: 220 22% 7%;
+  --background: 24 18% 9%;
+  --foreground: 36 35% 94%;
+  --muted: 24 14% 16%;
+  --muted-foreground: 30 15% 71%;
+  --card: 24 16% 12%;
+  --card-foreground: 36 35% 94%;
+  --border: 24 13% 24%;
+  --primary: 27 65% 73%;
+  --primary-foreground: 24 26% 14%;
+  --accent: 27 65% 66%;
+  --accent-foreground: 24 26% 14%;
 }
 
 * {
@@ -51,9 +51,9 @@ body {
   margin: 0;
   min-width: 320px;
   background:
-    radial-gradient(circle at top left, hsl(30 82% 88% / 0.42), transparent 32rem),
-    radial-gradient(circle at 85% 12%, hsl(42 70% 90% / 0.28), transparent 24rem),
-    linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted) / 0.32));
+    radial-gradient(circle at top left, hsl(28 75% 85% / 0.38), transparent 36rem),
+    radial-gradient(circle at 85% 12%, hsl(40 65% 87% / 0.3), transparent 28rem),
+    hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: InterVariable, Inter, ui-sans-serif, system-ui, sans-serif;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
@@ -65,8 +65,8 @@ body {
 
 .dark body {
   background:
-    radial-gradient(circle at 18% 0%, hsl(204 100% 36% / 0.18), transparent 30rem),
-    linear-gradient(180deg, hsl(var(--background)), hsl(220 22% 5%));
+    radial-gradient(circle at 18% 0%, hsl(24 60% 35% / 0.15), transparent 30rem),
+    hsl(var(--background));
 }
 
 ::selection {
@@ -108,17 +108,13 @@ body {
   }
 }
 
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+/* Content is visible by default; the reveal action progressively adds motion. */
+main {
+  overflow-x: clip;
 }
 
-.reveal.in-view {
-  opacity: 1;
-  transform: translateY(0);
+section[id] {
+  scroll-margin-top: 7rem;
 }
 
 .hero-orbit {

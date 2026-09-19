@@ -4,10 +4,10 @@
 </script>
 
 <section id="about" class="section-shell py-20 sm:py-28">
-  <div class="reveal surface grid gap-8 rounded-apple p-7 sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center" use:reveal={0}>
+  <div class="surface grid gap-8 rounded-apple p-7 sm:p-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
     <div class="space-y-5 max-w-md">
       <p class="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">About</p>
-      <div class="max-w-sm overflow-hidden rounded-[2rem] border border-border bg-muted shadow-soft">
+      <div class="max-w-sm overflow-hidden rounded-[2rem] border border-border bg-muted shadow-soft" use:reveal={{ kind: 'image' }}>
         <img
           src="/assets/sdsu-profile-pic.webp"
           alt="Duffy Adams profile photo"
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="space-y-5">
+    <div class="space-y-5" use:reveal={{ kind: 'rise', delay: 140 }}>
       <div class="flex gap-4">
         <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-muted">
           <GraduationCap size={22} />

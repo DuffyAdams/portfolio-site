@@ -4,6 +4,23 @@
 
   const projects = [
     {
+      title: 'FoodNotes',
+      description:
+        'A mobile-first visual food journal that turns meal photos into editable nutrition estimates, with instant local saves and private cloud sync.',
+      highlights: [
+        'Photo-based meal analysis with approximate calories, macros, and nutrients',
+        'Offline-first IndexedDB journal with account-specific sync queues',
+        'Supabase authentication, private photo storage, and Row Level Security',
+        'Searchable meal history, reusable pantry foods, and nutrition insights'
+      ],
+      tech: ['Svelte 5', 'TypeScript', 'Dexie.js', 'IndexedDB', 'Supabase', 'OpenRouter', 'PWA'],
+      demoHref: 'https://food.duffyadams.com/',
+      githubHref: 'https://github.com/DuffyAdams/FoodNotes',
+      preview: '/assets/foodnotes-project-preview-202609.mp4',
+      previewPoster: '/assets/foodnotes-project-preview-202609.jpg',
+      accent: 'linear-gradient(135deg, #f5efe3, #a9b99d 50%, #536c52)'
+    },
+    {
       title: 'San Diego Traffic Watch',
       description:
         'A real-time traffic and emergency incident dashboard that aggregates live public safety data across San Diego into one searchable web platform.',
@@ -18,7 +35,8 @@
       tech: ['Svelte', 'Flask', 'Python', 'SQLite', 'Playwright', 'OpenAI API', 'Tailwind/CSS'],
       demoHref: 'https://traffic-app.duffyadams.com/',
       githubHref: 'https://github.com/DuffyAdams',
-      preview: '/assets/traffic-app-web-capture-loop.webm',
+      preview: '/assets/traffic-project-preview-202609.mp4',
+      previewPoster: '/assets/traffic-project-preview-202609.jpg',
       accent: 'linear-gradient(135deg, #bae6fd, #38bdf8 48%, #0f172a)'
     },
     {
@@ -34,7 +52,8 @@
       tech: ['Svelte', 'Vite', 'Dexie.js', 'IndexedDB', 'Node.js', 'Express', 'SQLite3', 'PWA'],
       demoHref: 'https://flex.duffyadams.com/',
       githubHref: 'https://github.com/DuffyAdams',
-      preview: '/assets/flex-app-web-capture-loop.webm',
+      preview: '/assets/flex-project-preview-202609.mp4',
+      previewPoster: '/assets/flex-project-preview-202609.jpg',
       accent: 'linear-gradient(135deg, #dcfce7, #22c55e 50%, #111827)'
     },
     {
@@ -72,7 +91,7 @@
 </script>
 
 <section id="projects" class="section-shell py-20 sm:py-28">
-  <div class="reveal mb-10 flex flex-col justify-between gap-5 sm:mb-14 md:flex-row md:items-end" use:reveal={0}>
+  <div class="reveal mb-10 flex flex-col justify-between gap-5 sm:mb-14 md:flex-row md:items-end" use:reveal={{ kind: 'heading' }}>
     <div>
       <p class="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">Selected Projects</p>
       <h2 class="mt-3 max-w-3xl text-4xl font-black tracking-normal sm:text-6xl">Projects I&apos;m proud of.</h2>
@@ -80,8 +99,8 @@
   </div>
 
   <div class="grid gap-5 md:grid-cols-2">
-    {#each projects.slice(0, 3) as project, index}
-      <ProjectCard {project} delay={index * 110} />
+    {#each projects.slice(0, 4) as project, index}
+      <ProjectCard {project} delay={(index % 2) * 130} direction={index % 2 === 0 ? -1 : 1} />
     {/each}
   </div>
 </section>

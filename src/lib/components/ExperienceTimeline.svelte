@@ -12,12 +12,12 @@
 
 <section id="experience" class="section-shell py-20 sm:py-28">
   <div class="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-    <div class="reveal" use:reveal={0}>
+    <div class="reveal" use:reveal={{ kind: 'heading' }}>
       <p class="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">Experience</p>
       <h2 class="mt-3 text-4xl font-black tracking-normal sm:text-6xl">Technical work with operational stakes.</h2>
     </div>
 
-    <article class="reveal surface rounded-apple p-7 sm:p-9" use:reveal={120}>
+    <article class="reveal surface rounded-apple p-7 sm:p-9" use:reveal={{ kind: 'card', direction: 1 }}>
       <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex gap-4">
           <div class="grid h-14 w-14 shrink-0 place-items-center rounded-3xl bg-muted">

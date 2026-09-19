@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ExternalLink, Github, Volume2, Wifi } from 'lucide-svelte';
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { reveal } from '$lib/reveal';
 
   type Project = {
@@ -11,6 +11,7 @@
     demoHref?: string;
     githubHref: string;
     preview?: string;
+    previewPoster?: string;
     previewFit?: 'cover' | 'contain';
     previewDemo?: 'volume-scroller';
     accent: string;
@@ -33,6 +34,10 @@
       '--pill-border: #6ee7f9; --pill-bg: rgba(110, 231, 249, 0.16); --pill-text: #0c6f86; --pill-dark-bg: rgba(34, 211, 238, 0.16); --pill-dark-text: #c8f8ff;',
     'Svelte 5':
       '--pill-border: #ff8f73; --pill-bg: rgba(255, 62, 0, 0.1); --pill-text: #a63d22; --pill-dark-bg: rgba(255, 62, 0, 0.14); --pill-dark-text: #ffd0c5;',
+    Supabase:
+      '--pill-border: #83bc9b; --pill-bg: rgba(131, 188, 155, 0.14); --pill-text: #326448; --pill-dark-bg: rgba(131, 188, 155, 0.16); --pill-dark-text: #c7ebd6;',
+    OpenRouter:
+      '--pill-border: #b6a5c9; --pill-bg: rgba(182, 165, 201, 0.14); --pill-text: #67517e; --pill-dark-bg: rgba(182, 165, 201, 0.16); --pill-dark-text: #e4d7f2;',
     Vite:
       '--pill-border: #c4a1ff; --pill-bg: rgba(196, 161, 255, 0.14); --pill-text: #6a3db3; --pill-dark-bg: rgba(139, 92, 246, 0.18); --pill-dark-text: #ecdeff;',
     'Dexie.js':
@@ -76,10 +81,56 @@
     );
   }
 
-  let { project, delay = 0 }: { project: Project; delay?: number } = $props();
-  let isVideo = $derived(project.preview?.endsWith('.webm') ?? false);
+  let { project, delay = 0, direction = 1 }: { project: Project; delay?: number; direction?: number } = $props();
+  let isVideo = $derived(/\.(webm|mp4)$/.test(project.preview ?? ''));
   let videoElement = $state<HTMLVideoElement>();
   let shouldLoadVideo = $state(false);
+  let previewRequested = $state(false);
+  let previewPlaying = $state(false);
+  let previewHovered = false;
+  let playbackRequest = 0;
+
+  async function startPreview() {
+    if (previewRequested) return;
+    previewRequested = true;
+    shouldLoadVideo = true;
+    const request = ++playbackRequest;
+    await tick();
+    if (!videoElement || request !== playbackRequest || !previewRequested) return;
+    try {
+      videoElement.defaultPlaybackRate = 2;
+      videoElement.playbackRate = 2;
+      await videoElement.play();
+      if (request !== playbackRequest || !previewRequested) {
+        if (!previewRequested) videoElement.pause();
+        return;
+      }
+      previewPlaying = true;
+    } catch {
+      if (request === playbackRequest) {
+        previewRequested = false;
+        previewPlaying = false;
+      }
+    }
+  }
+
+  function stopPreview() {
+    playbackRequest += 1;
+    previewRequested = false;
+    previewPlaying = false;
+    videoElement?.pause();
+    if (videoElement?.readyState) videoElement.currentTime = 0;
+  }
+
+  function leavePreview() {
+    previewHovered = false;
+    stopPreview();
+  }
+
+  function togglePreview() {
+    if (previewRequested) stopPreview();
+    else void startPreview();
+  }
   const volumeBars = Array.from({ length: 13 }, (_, index) => index);
   let demoVolume = $state(100);
   let demoPulse = $state(0);
@@ -128,23 +179,27 @@
   onMount(() => {
     if (!isVideo || !videoElement) return;
 
-    if (!('IntersectionObserver' in window)) {
-      shouldLoadVideo = true;
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return;
-        shouldLoadVideo = true;
-        observer.disconnect();
-      },
-      { rootMargin: '300px 0px' }
-    );
-
-    observer.observe(videoElement);
-
-    return () => observer.disconnect();
+    // Preload nearby clips, but only explicit preview interaction starts playback.
+    const preloadObserver = typeof IntersectionObserver !== 'undefined'
+      ? new IntersectionObserver(([entry]) => {
+          if (!entry?.isIntersecting) return;
+          shouldLoadVideo = true;
+          preloadObserver?.disconnect();
+        }, { rootMargin: '300px 0px' }) : undefined;
+    const visibilityObserver = typeof IntersectionObserver !== 'undefined'
+      ? new IntersectionObserver(([entry]) => {
+          if (!entry?.isIntersecting) stopPreview();
+        }) : undefined;
+    preloadObserver?.observe(videoElement);
+    visibilityObserver?.observe(videoElement);
+    const hidePreview = () => { if (document.hidden) stopPreview(); };
+    document.addEventListener('visibilitychange', hidePreview);
+    return () => {
+      playbackRequest += 1;
+      preloadObserver?.disconnect();
+      visibilityObserver?.disconnect();
+      document.removeEventListener('visibilitychange', hidePreview);
+    };
   });
 
   onMount(() => {
@@ -167,14 +222,14 @@
   });
 </script>
 
-<article class="reveal group flex h-full flex-col overflow-hidden rounded-apple border border-border bg-card p-3 shadow-soft transition duration-300 hover:-translate-y-2 hover:shadow-hover" use:reveal={delay}>
-  <div class="relative aspect-[16/10] overflow-hidden rounded-[2rem] bg-muted">
+<article class="reveal group flex h-full flex-col overflow-hidden rounded-apple border border-border bg-card p-3 shadow-soft transition duration-300 hover:-translate-y-2 hover:shadow-hover" use:reveal={{ kind: 'card', delay, direction }}>
+  <div class="project-preview-frame relative aspect-[16/10] overflow-hidden bg-muted">
     {#if project.previewDemo === 'volume-scroller'}
       <div class="volume-demo absolute inset-0 bg-[#121212] text-white">
         <div class="volume-wallpaper absolute inset-[-8%]"></div>
 
         <div
-          class="volume-target absolute inset-x-2.5 bottom-2 h-[18%] rounded-[1rem] border border-white/10 bg-[#111827]/72 shadow-2xl outline-none backdrop-blur-xl transition duration-200 focus-visible:ring-2 focus-visible:ring-sky-300"
+          class="volume-target absolute outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
           role="slider"
           tabindex="0"
           aria-label="Volume Scroller taskbar demo"
@@ -184,8 +239,8 @@
           onwheel={handleVolumeWheel}
           onkeydown={handleVolumeKeydown}
         >
-          <div class="flex h-full items-center justify-between px-3">
-            <div class="flex min-w-0 items-center gap-2">
+          <div class="taskbar-content">
+            <div class="taskbar-apps">
               <span class="taskbar-icon taskbar-start grid place-items-center" aria-hidden="true">
                 <span class="windows-mark">
                   <span></span>
@@ -203,10 +258,10 @@
               <span class="taskbar-icon explorer-icon" aria-hidden="true"></span>
             </div>
 
-            <div class="flex items-center gap-2 text-white/78">
-              <Wifi size={15} />
-              <Volume2 size={16} />
-              <span class="min-w-14 text-right text-[0.68rem] font-semibold tabular-nums tracking-normal text-white/88">{demoTaskbarTime}</span>
+            <div class="taskbar-status">
+              <Wifi size={14} aria-hidden="true" />
+              <Volume2 size={14} aria-hidden="true" />
+              <span class="taskbar-clock">{demoTaskbarTime}</span>
             </div>
           </div>
         </div>
@@ -232,21 +287,50 @@
       </div>
     {:else if project.preview}
       {#if isVideo}
-        <video
+        <button
+          type="button"
+          class="project-video-preview absolute inset-0 block h-full w-full overflow-hidden bg-transparent p-0 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-accent"
+          aria-label={`${previewRequested ? 'Stop' : 'Play'} ${project.title} preview`}
+          aria-pressed={previewRequested}
+          onpointerenter={(event) => {
+            if (event.pointerType !== 'mouse') return;
+            previewHovered = true;
+            void startPreview();
+          }}
+          onpointerleave={(event) => { if (event.pointerType === 'mouse') leavePreview(); }}
+          onblur={() => {
+            if (!previewHovered) stopPreview();
+          }}
+          onclick={togglePreview}
+          onkeydown={(event) => { if (event.key === 'Escape') stopPreview(); }}
+        >
+          <video
           bind:this={videoElement}
           src={shouldLoadVideo ? project.preview : undefined}
-          class="h-full w-full object-cover opacity-95 transition duration-500 group-hover:scale-[1.03]"
-          autoplay={shouldLoadVideo}
+          poster={project.previewPoster}
+          class="h-full w-full object-cover"
           loop
           muted
           playsinline
-          preload="none"
-          aria-label={`${project.title} preview video`}
+          preload={shouldLoadVideo ? 'auto' : 'none'}
+          aria-hidden="true"
+          onerror={stopPreview}
         ></video>
+          <img
+            src={project.previewPoster}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            class="preview-poster absolute inset-0 h-full w-full object-cover"
+            class:playing={previewPlaying}
+          />
+        </button>
       {:else}
         <img
           src={project.preview}
-          alt=""
+          alt={`${project.title} app preview`}
+          loading="lazy"
+          decoding="async"
           class={`h-full w-full ${project.previewFit === 'contain' ? 'object-contain p-5' : 'object-cover'} opacity-95 transition duration-500 group-hover:scale-[1.03]`}
         />
       {/if}
@@ -263,8 +347,10 @@
         </div>
       </div>
     {/if}
-    <div class="absolute right-4 top-4 rounded-full bg-[#fff7ed]/92 px-3 py-1 text-xs font-bold text-orange-950 shadow-sm dark:bg-slate-950/86 dark:text-white">
-      Preview
+    <div class="pointer-events-none absolute right-4 top-4 rounded-full bg-[#fff7ed]/95 px-3 py-1 text-xs font-bold text-orange-950 shadow-sm dark:bg-slate-950/90 dark:text-white">
+      {#if isVideo}
+        {#if previewPlaying}Playing{:else}<span class="hover-preview-label">Hover to preview</span><span class="touch-preview-label">Tap to preview</span>{/if}
+      {:else}Preview{/if}
     </div>
   </div>
 
@@ -299,6 +385,20 @@
 </article>
 
 <style>
+  .project-preview-frame {
+    --preview-radius: 2rem;
+    border-radius: var(--preview-radius);
+  }
+  .preview-poster { opacity: 1; transition: opacity 160ms ease; }
+  .preview-poster.playing { opacity: 0; pointer-events: none; }
+  .touch-preview-label { display: none; }
+  @media (hover: none) {
+    .hover-preview-label { display: none; }
+    .touch-preview-label { display: inline; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .preview-poster { transition: none; }
+  }
   .tech-pill {
     border: 2px solid var(--pill-border);
     background: var(--pill-bg);
@@ -314,6 +414,8 @@
   }
 
   .volume-demo {
+    --taskbar-inset: 0.5rem;
+    --taskbar-height: clamp(2.5rem, 14%, 3rem);
     background:
       radial-gradient(circle at 74% 22%, rgba(56, 189, 248, 0.22), transparent 30%),
       linear-gradient(145deg, #0f172a 0%, #111827 46%, #18181b 100%);
@@ -369,15 +471,62 @@
   }
 
   .volume-target {
+    inset-inline: var(--taskbar-inset);
+    bottom: var(--taskbar-inset);
+    height: var(--taskbar-height);
+    border-radius: calc(var(--preview-radius) - var(--taskbar-inset));
+    border: 1px solid rgba(220, 236, 255, 0.18);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent), rgba(9, 24, 52, 0.5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 6px 20px rgba(2, 8, 23, 0.16);
+    backdrop-filter: blur(20px) saturate(1.3);
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+    transition: background-color 180ms ease, border-color 180ms ease;
     cursor: ns-resize;
     z-index: 2;
+  }
+
+  .volume-target:hover,
+  .volume-target:focus-visible {
+    background-color: rgba(9, 24, 52, 0.64);
+    border-color: rgba(220, 236, 255, 0.3);
+  }
+
+  .taskbar-content {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 1rem;
+  }
+
+  .taskbar-apps,
+  .taskbar-status {
+    display: flex;
+    align-items: center;
+  }
+
+  .taskbar-apps { gap: 0.8rem; }
+  .taskbar-status { gap: 0.5rem; color: rgba(255, 255, 255, 0.86); }
+
+  .taskbar-clock {
+    min-width: 3.75rem;
+    margin-left: 0.2rem;
+    padding-left: 0.7rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.94);
+    font-size: 0.625rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.4;
+    text-align: right;
+    white-space: nowrap;
   }
 
   .taskbar-icon {
     position: relative;
     z-index: 1;
-    width: clamp(1.3rem, 3.9vw, 1.72rem);
-    height: clamp(1.3rem, 3.9vw, 1.72rem);
+    width: 1.25rem;
+    height: 1.25rem;
     flex: 0 0 auto;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.14),
@@ -391,8 +540,8 @@
 
   .windows-mark {
     display: grid;
-    width: 1.42rem;
-    height: 1.42rem;
+    width: 100%;
+    height: 100%;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.08rem;
   }
@@ -410,8 +559,8 @@
 
   .task-view-icon span {
     position: absolute;
-    width: 1.08rem;
-    height: 1.08rem;
+    width: 0.9rem;
+    height: 0.9rem;
     border-radius: 0.18rem;
     background: linear-gradient(145deg, #f8fafc, #dbe4ee);
     box-shadow:
@@ -461,7 +610,7 @@
   }
 
   .volume-overlay {
-    bottom: calc(18% + 1.15rem);
+    bottom: calc(var(--taskbar-inset) + var(--taskbar-height) + 0.65rem);
     width: min(64%, 15.5rem);
     height: clamp(2.15rem, 9.5vw, 3.7rem);
     gap: clamp(0.3rem, 1.15vw, 0.5rem);
@@ -470,6 +619,7 @@
     opacity: 0;
     pointer-events: none;
     transform: translateX(-50%) translateY(0.9rem) scale(0.66);
+    transform-origin: bottom center;
     transition:
       opacity 180ms ease,
       transform 260ms cubic-bezier(0.16, 1, 0.3, 1);

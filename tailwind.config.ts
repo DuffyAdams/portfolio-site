@@ -26,8 +26,8 @@ const config = {
         sans: ['InterVariable', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
       },
       boxShadow: {
-        soft: '0 24px 80px -36px rgb(15 23 42 / 0.34)',
-        hover: '0 34px 90px -34px rgb(15 23 42 / 0.48)',
+        soft: '0 24px 80px -36px rgb(88 57 36 / 0.22)',
+        hover: '0 34px 90px -34px rgb(88 57 36 / 0.32)',
         inset: 'inset 0 1px 0 rgb(255 255 255 / 0.72)'
       }
     }

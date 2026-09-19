@@ -6,14 +6,25 @@
   const baseTilt = { x: 0, y: -10, z: -2 };
   const phonePreviews = [
     {
+      title: 'FoodNotes',
+      src: '/assets/foodnotes-showcase-mobile-202609.mp4',
+      poster: '/assets/foodnotes-showcase-mobile-202609.jpg',
+      label: 'Mobile preview of the FoodNotes food journal',
+      type: 'video'
+    },
+    {
       title: 'San Diego Traffic Watch',
-      src: '/assets/traffic-app-iphone-capture-loop.webm',
-      label: 'Mobile preview of the San Diego Traffic Watch app'
+      src: '/assets/traffic-showcase-mobile-202609.mp4',
+      poster: '/assets/traffic-showcase-mobile-202609.jpg',
+      label: 'Mobile preview of the San Diego Traffic Watch app',
+      type: 'video'
     },
     {
       title: 'FLEX',
-      src: '/assets/flex-app-iphone-capture-loop.webm',
-      label: 'Mobile preview of the FLEX fitness tracking app'
+      src: '/assets/flex-showcase-mobile-v292.mp4',
+      poster: '/assets/flex-showcase-mobile-v292.jpg',
+      label: 'Mobile preview of the FLEX fitness tracking app',
+      type: 'video'
     }
   ] as const;
 
@@ -76,7 +87,7 @@
 </script>
 
 <section id="top" class="section-shell relative overflow-hidden pb-20 pt-24 sm:pt-28 lg:pb-28 lg:pt-32">
-  <div class="absolute left-1/2 top-28 -z-10 h-80 w-80 -translate-x-1/2 rounded-full bg-sky-300/22 blur-3xl hero-orbit dark:bg-sky-500/12"></div>
+  <div class="absolute left-1/2 top-28 -z-10 h-80 w-80 -translate-x-1/2 rounded-full bg-orange-200/30 blur-3xl hero-orbit dark:bg-orange-700/15"></div>
 
   <div class="grid items-center gap-10 lg:grid-cols-[1.03fr_0.97fr]">
     <div class="reveal" use:reveal={0}>
@@ -128,20 +139,21 @@
               <div class="absolute right-3 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-slate-700"></div>
             </div>
             {#key activePhonePreview.src}
-              <video
-                class="aspect-[9/19.5] w-full rounded-[2.2rem] object-cover object-[50%_8%]"
-                src={activePhonePreview.src}
-                autoplay
-                loop
-                muted
-                playsinline
-                preload="metadata"
-                aria-label={activePhonePreview.label}
-              ></video>
+                <video
+                  class="aspect-[9/19.5] w-full rounded-[2.2rem] object-cover object-[50%_8%]"
+                  src={activePhonePreview.src}
+                  autoplay
+                  poster={activePhonePreview.poster}
+                  loop
+                  muted
+                  playsinline
+                  preload="metadata"
+                  aria-label={activePhonePreview.label}
+                ></video>
             {/key}
             <div class="absolute inset-x-4 bottom-10 z-20 flex items-center justify-between">
               <button
-                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/48 text-white shadow-lg backdrop-blur transition hover:bg-black/62 focus-visible:outline-white/80"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white shadow-lg backdrop-blur transition hover:bg-black/75 focus-visible:outline-white/80"
                 type="button"
                 aria-label="Show previous app preview"
                 onclick={(event) => {
@@ -154,7 +166,7 @@
               <div class="flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1.5 backdrop-blur">
                 {#each phonePreviews as preview, index}
                   <button
-                    class={`h-1.5 rounded-full transition ${index === activePhonePreviewIndex ? 'w-5 bg-white' : 'w-1.5 bg-white/48 hover:bg-white/75'}`}
+                    class={`h-1.5 rounded-full transition ${index === activePhonePreviewIndex ? 'w-5 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/75'}`}
                     type="button"
                     aria-label={`Show ${preview.title} preview`}
                     aria-current={index === activePhonePreviewIndex ? 'true' : undefined}
@@ -166,7 +178,7 @@
                 {/each}
               </div>
               <button
-                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/48 text-white shadow-lg backdrop-blur transition hover:bg-black/62 focus-visible:outline-white/80"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white shadow-lg backdrop-blur transition hover:bg-black/75 focus-visible:outline-white/80"
                 type="button"
                 aria-label="Show next app preview"
                 onclick={(event) => {

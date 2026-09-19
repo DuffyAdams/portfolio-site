@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script>
       (() => {
-        const stored = localStorage.getItem('theme');
-        document.documentElement.classList.toggle('dark', stored ? stored === 'dark' : true);
+        try {
+          document.documentElement.classList.toggle('dark', localStorage.getItem('theme') === 'dark');
+        } catch {
+          document.documentElement.classList.remove('dark');
+        }
       })();
     </script>
     <meta

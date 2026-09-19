@@ -12,14 +12,14 @@
 </script>
 
 <section id="skills" class="section-shell py-16 sm:py-20">
-  <div class="reveal mb-8" use:reveal={0}>
+  <div class="reveal mb-8" use:reveal={{ kind: 'heading' }}>
     <p class="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">Technical Range</p>
     <h2 class="mt-3 max-w-3xl text-4xl font-black tracking-normal sm:text-6xl">Tools and languages I use to ship projects</h2>
   </div>
 
   <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
     {#each groups as group, index}
-      <article class={`reveal surface rounded-apple p-5 sm:p-6 ${group.span}`} use:reveal={index * 90}>
+      <article class={`reveal surface rounded-apple p-5 sm:p-6 ${group.span}`} use:reveal={{ kind: 'tile', delay: (index % 3) * 100, direction: index % 2 === 0 ? -1 : 1 }}>
         <div class="mb-5 flex items-center justify-between">
           <div class="grid h-10 w-10 place-items-center rounded-xl bg-muted">
             <svelte:component this={group.icon} size={20} />
