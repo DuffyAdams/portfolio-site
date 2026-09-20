@@ -47,6 +47,14 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Change palettes in one paint, without animating every themed descendant. */
+html.theme-changing,
+html.theme-changing *,
+html.theme-changing *::before,
+html.theme-changing *::after {
+  transition: none !important;
+}
+
 body {
   margin: 0;
   min-width: 320px;

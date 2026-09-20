@@ -1,17 +1,7 @@
 <script lang="ts">
   import { Moon, Sun } from 'lucide-svelte';
   import { onMount } from 'svelte';
-  import { isDarkTheme } from '$lib/theme';
-
-  function applyTheme(next: boolean) {
-    isDarkTheme.set(next);
-    document.documentElement.classList.toggle('dark', next);
-    try {
-      localStorage.setItem('theme', next ? 'dark' : 'light');
-    } catch {
-      // The toggle still works when browser storage is unavailable.
-    }
-  }
+  import { applyTheme, isDarkTheme } from '$lib/theme';
 
   onMount(() => {
     isDarkTheme.set(document.documentElement.classList.contains('dark'));
