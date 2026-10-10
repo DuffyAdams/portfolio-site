@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { ArrowDownRight, ChevronLeft, ChevronRight, FileDown, Github, Linkedin, Mail, Terminal } from 'lucide-svelte';
+  import { ArrowDownRight, ArrowUp, ChevronLeft, ChevronRight, FileDown, Github, Linkedin, Mail } from 'lucide-svelte';
   import { onMount } from 'svelte';
+  import { links } from '$lib/content';
   import { reveal } from '$lib/reveal';
 
   const baseTilt = { x: 0, y: -10, z: -2 };
@@ -86,40 +87,37 @@
   });
 </script>
 
-<section id="top" class="section-shell relative overflow-hidden pb-20 pt-24 sm:pt-28 lg:pb-28 lg:pt-32">
+<section id="top" class="section-shell relative overflow-hidden pb-6 pt-28 lg:flex lg:min-h-[100svh] lg:items-center lg:pb-10 lg:pt-28">
   <div class="absolute left-1/2 top-28 -z-10 h-80 w-80 -translate-x-1/2 rounded-full bg-orange-200/30 blur-3xl hero-orbit dark:bg-orange-700/15"></div>
 
-  <div class="grid items-center gap-10 lg:grid-cols-[1.03fr_0.97fr]">
+  <div class="grid w-full items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
     <div class="reveal" use:reveal={0}>
-      <p class="mb-5 text-sm font-bold uppercase tracking-[0.22em] text-muted-foreground">Software Engineer / Full-Stack Developer</p>
-      <h1 class="max-w-4xl text-5xl font-black leading-[0.95] tracking-normal text-foreground sm:text-7xl lg:text-8xl">
-        Duffy Adams
+      <h1 class="text-5xl font-black leading-[0.95] tracking-normal text-foreground sm:text-7xl lg:text-8xl xl:text-9xl">
+        I&apos;m Duffy.
       </h1>
-      <p class="mt-7 max-w-2xl text-xl leading-8 text-muted-foreground sm:text-2xl sm:leading-9">
-        I build real-time web apps, data-driven dashboards, and polished user experiences.
+      <p class="mt-6 max-w-2xl text-lg leading-8 text-foreground/85 sm:text-xl sm:leading-9 lg:mt-8 lg:text-2xl lg:leading-10">
+        I build things when little problems bug me enough. Traffic I can&apos;t explain, class files I have to download one by one, workout apps that are almost right. Most of my projects start like that.
+      </p>
+      <p class="mt-4 max-w-xl text-base leading-7 text-muted-foreground lg:text-lg lg:leading-8">
+        I&apos;m a QA engineer at ICSolutions and an SDSU computer science grad, based in Chula Vista, CA.
       </p>
 
-      <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+      <div class="mt-8 flex flex-wrap items-center gap-2 lg:mt-10">
         <a class="button-primary group" href="#projects">
-          View Projects
+          See what I&apos;ve built
           <ArrowDownRight class="transition group-hover:translate-x-0.5 group-hover:translate-y-0.5" size={18} />
         </a>
-        <a class="button-secondary" href="/assets/Resume_5_22_26.pdf" download="Duffy-Adams-Resume.pdf">
+        <a class="button-secondary" href={links.resume} download={links.resumeFileName}>
           <FileDown size={18} />
-          Download Resume
+          Resume
         </a>
-      </div>
-
-      <div class="mt-7 flex flex-wrap gap-2">
-        <!-- Replace profile/contact links here. -->
-        <a class="button-secondary !px-4 !py-2.5" href="https://github.com/DuffyAdams" target="_blank" rel="noreferrer"><Github size={17} /> GitHub</a>
-        <a class="button-secondary !px-4 !py-2.5" href="https://www.linkedin.com/in/duffyadams/" target="_blank" rel="noreferrer"><Linkedin size={17} /> LinkedIn</a>
-        <a class="button-secondary !px-4 !py-2.5" href="mailto:duffyadams55@gmail.com"><Mail size={17} /> Email</a>
-        <a class="button-secondary !px-4 !py-2.5" href="/terminal/index.html"><Terminal size={17} /> Terminal Mode</a>
+        <a class="button-secondary !h-11 !w-11 !px-0" href={links.github} target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={18} /></a>
+        <a class="button-secondary !h-11 !w-11 !px-0" href={links.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn"><Linkedin size={18} /></a>
+        <a class="button-secondary !h-11 !w-11 !px-0" href={links.email} aria-label="Email"><Mail size={18} /></a>
       </div>
     </div>
 
-    <div class="reveal lg:pl-6" use:reveal={140}>
+    <div class="reveal hidden lg:block lg:pl-6" use:reveal={140}>
       <div
         role="presentation"
         class="relative mx-auto flex justify-center [perspective:1200px] float-soft"
@@ -130,7 +128,7 @@
         onpointerleave={resetPhoneTilt}
       >
         <div
-          class="surface iphone-shell relative w-full max-w-[17rem] rounded-[3rem] bg-slate-100 p-2 shadow-hover transition-transform duration-200 ease-out [transform-style:preserve-3d] dark:bg-slate-950 sm:max-w-[18.75rem]"
+          class="surface iphone-shell relative w-full max-w-[18.5rem] rounded-[3rem] bg-slate-100 p-2 shadow-hover transition-transform duration-200 ease-out [transform-style:preserve-3d] dark:bg-slate-950 xl:max-w-[20rem]"
           style={`transform: ${phoneTransform};`}
         >
           <div class="iphone-screen relative overflow-hidden rounded-[2.6rem] border border-slate-300/60 bg-slate-50 p-1.5 dark:border-white/10 dark:bg-black">
@@ -197,6 +195,31 @@
           <div class="absolute -left-1 top-36 h-14 w-1.5 rounded-l-full bg-slate-300 dark:bg-slate-800"></div>
         </div>
       </div>
+      <div class="mx-auto mt-6 flex w-fit items-center gap-3 rounded-full border border-border bg-card py-1.5 pl-1.5 pr-4 shadow-soft" aria-live="polite">
+        <span class="phone-hint-arrow grid h-8 w-8 place-items-center rounded-full bg-primary text-primary-foreground" aria-hidden="true">
+          <ArrowUp size={16} strokeWidth={2.5} />
+        </span>
+        <p class="text-sm leading-tight">
+          <span class="font-bold">{activePhonePreview.title}</span>
+          <span class="text-muted-foreground">· {activePhonePreviewIndex + 1} of {phonePreviews.length}, swipe for more</span>
+        </p>
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  .phone-hint-arrow {
+    animation: phone-hint 1.8s ease-in-out infinite;
+  }
+
+  @keyframes phone-hint {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+</style>

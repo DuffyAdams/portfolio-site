@@ -1,6 +1,7 @@
 <script lang="ts">
   import { FileDown, Github, Linkedin, Menu, Terminal, X } from 'lucide-svelte';
   import ThemeToggle from './ThemeToggle.svelte';
+  import { links as profileLinks } from '$lib/content';
 
   let open = $state(false);
 
@@ -8,7 +9,8 @@
     { href: '#projects', label: 'Projects' },
     { href: '#skills', label: 'Skills' },
     { href: '#experience', label: 'Experience' },
-    { href: '#about', label: 'About' }
+    { href: '#about', label: 'About' },
+    { href: '#contact', label: 'Contact' }
   ];
 </script>
 
@@ -29,17 +31,16 @@
     </div>
 
     <div class="hidden items-center gap-2 md:flex">
-      <!-- Replace these href values with your live profiles. -->
-      <a class="button-secondary !h-11 !px-4" href="https://github.com/DuffyAdams" target="_blank" rel="noreferrer" aria-label="GitHub profile">
+      <a class="button-secondary !h-11 !px-4" href={profileLinks.github} target="_blank" rel="noreferrer" aria-label="GitHub profile">
         <Github size={17} /> GitHub
       </a>
-      <a class="button-secondary !h-11 !px-4" href="https://www.linkedin.com/in/duffyadams/" target="_blank" rel="noreferrer" aria-label="LinkedIn profile">
+      <a class="button-secondary !h-11 !px-4" href={profileLinks.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn profile">
         <Linkedin size={17} /> LinkedIn
       </a>
-      <a class="button-secondary !h-11 !w-11 !px-0" href="/assets/Resume_5_22_26.pdf" download="Duffy-Adams-Resume.pdf" aria-label="Download resume">
+      <a class="button-secondary !h-11 !w-11 !px-0" href={profileLinks.resume} download={profileLinks.resumeFileName} aria-label="Download resume">
         <FileDown size={17} />
       </a>
-      <a class="button-secondary !h-11 !w-11 !px-0" href="/terminal/index.html" aria-label="Open Terminal Mode">
+      <a class="button-secondary !h-11 !w-11 !px-0" href={profileLinks.terminal} aria-label="Open terminal mode">
         <Terminal size={17} />
       </a>
       <ThemeToggle />
@@ -69,8 +70,8 @@
         {#each links as link}
           <a class="rounded-2xl px-4 py-3 text-sm font-semibold hover:bg-muted" href={link.href} onclick={() => (open = false)}>{link.label}</a>
         {/each}
-        <a class="rounded-2xl px-4 py-3 text-sm font-semibold hover:bg-muted" href="/terminal/index.html">Terminal Mode</a>
-        <a class="rounded-2xl px-4 py-3 text-sm font-semibold hover:bg-muted" href="/assets/Resume_5_22_26.pdf" download="Duffy-Adams-Resume.pdf">Download Resume</a>
+        <a class="rounded-2xl px-4 py-3 text-sm font-semibold hover:bg-muted" href={profileLinks.terminal}>Terminal mode</a>
+        <a class="rounded-2xl px-4 py-3 text-sm font-semibold hover:bg-muted" href={profileLinks.resume} download={profileLinks.resumeFileName}>Resume (PDF)</a>
       </div>
     </div>
   {/if}

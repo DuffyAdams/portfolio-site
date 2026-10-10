@@ -9,10 +9,10 @@
 </script>
 
 <svelte:head>
-  <meta property="og:title" content="Duffy Adams | Software Engineer" />
+  <meta property="og:title" content="Duffy Adams | Developer & QA Engineer" />
   <meta
     property="og:description"
-    content="Recruiter-focused portfolio for Duffy Adams, a software engineer building real-time web apps, dashboards, automation, and polished interfaces."
+    content="Stuff I built because something bugged me: a workout app, a live San Diego traffic map, a photo food journal, and a bunch of smaller tools."
   />
 </svelte:head>
 

@@ -1,21 +1,8 @@
 <script lang="ts">
-  import { ExternalLink, Github, Volume2, Wifi } from 'lucide-svelte';
+  import { ChevronDown, ExternalLink, Github, Lock, Volume2, Wifi } from 'lucide-svelte';
   import { onMount, tick } from 'svelte';
+  import type { Project } from '$lib/content';
   import { reveal } from '$lib/reveal';
-
-  type Project = {
-    title: string;
-    description: string;
-    tech: string[];
-    highlights: string[];
-    demoHref?: string;
-    githubHref: string;
-    preview?: string;
-    previewPoster?: string;
-    previewFit?: 'cover' | 'contain';
-    previewDemo?: 'volume-scroller';
-    accent: string;
-  };
 
   const techPillStyles: Record<string, string> = {
     Svelte:
@@ -71,7 +58,17 @@
     TypeScript:
       '--pill-border: #79a8ff; --pill-bg: rgba(121, 168, 255, 0.14); --pill-text: #285da8; --pill-dark-bg: rgba(59, 130, 246, 0.18); --pill-dark-text: #d9e8ff;',
     'Windows APIs':
-      '--pill-border: #7dd3fc; --pill-bg: rgba(125, 211, 252, 0.14); --pill-text: #0d6c92; --pill-dark-bg: rgba(14, 165, 233, 0.16); --pill-dark-text: #d1f1ff;'
+      '--pill-border: #7dd3fc; --pill-bg: rgba(125, 211, 252, 0.14); --pill-text: #0d6c92; --pill-dark-bg: rgba(14, 165, 233, 0.16); --pill-dark-text: #d1f1ff;',
+    Capacitor:
+      '--pill-border: #93c5fd; --pill-bg: rgba(83, 185, 255, 0.14); --pill-text: #1d5fa8; --pill-dark-bg: rgba(83, 185, 255, 0.16); --pill-dark-text: #d4ebff;',
+    MapLibre:
+      '--pill-border: #a5b4fc; --pill-bg: rgba(165, 180, 252, 0.14); --pill-text: #3f4bb0; --pill-dark-bg: rgba(99, 102, 241, 0.16); --pill-dark-text: #e0e4ff;',
+    NGINX:
+      '--pill-border: #6ee7a0; --pill-bg: rgba(0, 150, 57, 0.1); --pill-text: #17693a; --pill-dark-bg: rgba(0, 150, 57, 0.16); --pill-dark-text: #c6f6d8;',
+    Electron:
+      '--pill-border: #7fc4cf; --pill-bg: rgba(71, 132, 143, 0.12); --pill-text: #2c6670; --pill-dark-bg: rgba(71, 132, 143, 0.2); --pill-dark-text: #d0f1f6;',
+    'SIP.js':
+      '--pill-border: #fda4af; --pill-bg: rgba(253, 164, 175, 0.14); --pill-text: #9f2f43; --pill-dark-bg: rgba(244, 63, 94, 0.14); --pill-dark-text: #ffd6dd;'
   };
 
   function getTechPillStyle(tech: string) {
@@ -81,7 +78,12 @@
     );
   }
 
-  let { project, delay = 0, direction = 1 }: { project: Project; delay?: number; direction?: number } = $props();
+  let {
+    project,
+    delay = 0,
+    direction = 1,
+    featured = false
+  }: { project: Project; delay?: number; direction?: number; featured?: boolean } = $props();
   let isVideo = $derived(/\.(webm|mp4)$/.test(project.preview ?? ''));
   let videoElement = $state<HTMLVideoElement>();
   let shouldLoadVideo = $state(false);
@@ -222,8 +224,11 @@
   });
 </script>
 
-<article class="reveal group flex h-full flex-col overflow-hidden rounded-apple border border-border bg-card p-3 shadow-soft transition duration-300 hover:-translate-y-2 hover:shadow-hover" use:reveal={{ kind: 'card', delay, direction }}>
-  <div class="project-preview-frame relative aspect-[16/10] overflow-hidden bg-muted">
+<article
+  class={`reveal group flex h-full flex-col overflow-hidden rounded-apple border border-border bg-card p-3 shadow-soft transition duration-300 hover:-translate-y-2 hover:shadow-hover ${featured ? 'md:col-span-2 md:flex-row lg:col-span-3' : ''}`}
+  use:reveal={{ kind: 'card', delay, direction }}
+>
+  <div class={`project-preview-frame relative aspect-[16/10] shrink-0 overflow-hidden bg-muted ${featured ? 'md:aspect-auto md:min-h-[19rem] md:w-[55%] lg:min-h-[22rem]' : ''}`}>
     {#if project.previewDemo === 'volume-scroller'}
       <div class="volume-demo absolute inset-0 bg-[#121212] text-white">
         <div class="volume-wallpaper absolute inset-[-8%]"></div>
@@ -350,36 +355,56 @@
     <div class="pointer-events-none absolute right-4 top-4 rounded-full bg-[#fff7ed]/95 px-3 py-1 text-xs font-bold text-orange-950 shadow-sm dark:bg-slate-950/90 dark:text-white">
       {#if isVideo}
         {#if previewPlaying}Playing{:else}<span class="hover-preview-label">Hover to preview</span><span class="touch-preview-label">Tap to preview</span>{/if}
-      {:else}Preview{/if}
+      {:else if project.previewDemo === 'volume-scroller'}Try scrolling on the taskbar
+      {:else}Screenshot{/if}
     </div>
   </div>
 
-  <div class="flex flex-1 flex-col p-5">
-    <h3 class="text-2xl font-black tracking-normal">{project.title}</h3>
-    <p class="mt-3 text-sm leading-6 text-muted-foreground">{project.description}</p>
+  <div class={`flex flex-1 flex-col px-3 pb-2 pt-4 sm:px-4 ${featured ? 'md:px-6 md:py-5' : ''}`}>
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <h3 class={`font-black tracking-normal ${featured ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'}`}>{project.title}</h3>
+      {#if featured}
+        <span class="rounded-full bg-muted px-2.5 py-0.5 text-xs font-bold text-muted-foreground">My biggest project</span>
+      {/if}
+    </div>
+    <p class="mt-2 text-sm leading-6 text-foreground/90 sm:text-[0.95rem]">{project.hook}</p>
 
-    <div class="mt-5 flex flex-wrap gap-2">
+    <div class="mt-3 flex flex-wrap gap-1.5">
       {#each project.tech as tech}
-        <span class="tech-pill rounded-full px-3 py-1 text-xs font-semibold" style={getTechPillStyle(tech)}>
+        <span class="tech-pill rounded-full px-2.5 py-0.5 text-[0.7rem] font-semibold" style={getTechPillStyle(tech)}>
           {tech}
         </span>
       {/each}
     </div>
 
-    <ul class="mt-6 space-y-3 text-sm leading-6 text-muted-foreground">
-      {#each project.highlights as highlight}
-        <li class="flex gap-3">
-          <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>
-          <span>{highlight}</span>
-        </li>
-      {/each}
-    </ul>
+    {#if featured}
+      <p class="mt-3 hidden text-sm leading-6 text-muted-foreground md:block">{project.description}</p>
+    {/if}
 
-    <div class="mt-auto flex flex-wrap gap-2 pt-7">
+    <details class="project-details mt-3 text-sm">
+      <summary class="inline-flex cursor-pointer list-none items-center gap-1 font-semibold text-muted-foreground transition hover:text-foreground">
+        <ChevronDown class="details-chevron transition-transform" size={16} /> How it's built
+      </summary>
+      <p class={`mt-2 leading-6 text-muted-foreground ${featured ? 'md:hidden' : ''}`}>{project.description}</p>
+      <ul class="mt-2 space-y-1.5 leading-6 text-muted-foreground">
+        {#each project.highlights as highlight}
+          <li class="flex gap-2.5">
+            <span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>
+            <span>{highlight}</span>
+          </li>
+        {/each}
+      </ul>
+    </details>
+
+    <div class="mt-auto flex flex-wrap items-center gap-2 pt-4">
       {#if project.demoHref}
-        <a class="button-primary !px-4 !py-2.5" href={project.demoHref} target="_blank" rel="noreferrer"><ExternalLink size={16} /> Live Demo</a>
+        <a class="button-primary !px-3.5 !py-2" href={project.demoHref} target="_blank" rel="noreferrer"><ExternalLink size={15} /> {project.demoLabel ?? 'Live site'}</a>
       {/if}
-      <a class="button-secondary !px-4 !py-2.5" href={project.githubHref} target="_blank" rel="noreferrer"><Github size={16} /> GitHub</a>
+      {#if project.githubHref}
+        <a class="button-secondary !px-3.5 !py-2" href={project.githubHref} target="_blank" rel="noreferrer"><Github size={15} /> Code</a>
+      {:else}
+        <span class="inline-flex items-center gap-1.5 px-2 text-xs font-semibold text-muted-foreground"><Lock size={14} /> Private repo</span>
+      {/if}
     </div>
   </div>
 </article>
@@ -392,6 +417,8 @@
   .preview-poster { opacity: 1; transition: opacity 160ms ease; }
   .preview-poster.playing { opacity: 0; pointer-events: none; }
   .touch-preview-label { display: none; }
+  .project-details summary::-webkit-details-marker { display: none; }
+  .project-details[open] :global(.details-chevron) { transform: rotate(180deg); }
   @media (hover: none) {
     .hover-preview-label { display: none; }
     .touch-preview-label { display: inline; }
